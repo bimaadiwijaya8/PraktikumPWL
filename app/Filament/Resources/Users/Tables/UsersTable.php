@@ -7,6 +7,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\Facades\Date;
 
 class UsersTable
 {
@@ -17,6 +18,7 @@ class UsersTable
                 //
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('email')->searchable()->sortable(),
+                TextColumn::make('created_at')->label('Created At')->sortable(),
             ])
             ->filters([
                 //
