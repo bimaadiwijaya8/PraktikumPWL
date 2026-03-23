@@ -19,8 +19,10 @@ class PostForm
     {
         return $schema
             ->components([
-                TextInput::make("title"),
-                TextInput::make("slug"),
+                TextInput::make("title")
+                    ->minLength(5),
+                TextInput::make("slug")
+                    ->unique(),
                 Select::make("category_id")
                     ->relationship("category", "slug")
                     ->preload()
