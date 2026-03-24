@@ -7,7 +7,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Checkbox;
@@ -21,46 +20,61 @@ class PostForm
     {
         return $schema
             ->components([
-                // section 1 - post details
+
+                // 🔵 KIRI (2/3)
                 Section::make("Post Details")
                     ->description("Fill in the details of the post")
-                    // -> icon(Heroicon::RocketLaunch)
                     ->icon('heroicon-o-document-text')
                     ->schema([
-                        // grouping fields into 2 columns
+
+                        // 2 kolom field utama
                         Group::make([
-                            TextInput::make("title"),
-                            TextInput::make("slug"),
+                            TextInput::make("title")
+                                ->required()
+                                ->minLength(5),
+
+                            TextInput::make("slug")
+                                ->unique(ignoreRecord: true),
+
                             Select::make("category_id")
                                 ->relationship("category", "name")
                                 ->preload()
                                 ->searchable(),
+
                             ColorPicker::make("color"),
                         ])->columns(2),
 
-                        MarkdownEditor::make("content"),
-                    ])->columnSpan(2),
+                        // full width
+                        MarkdownEditor::make("body")
+                            ->columnSpanFull(),
 
-                // Grouping fields into 2 columns
+                    ])
+                    ->columnSpan(2),
+
+                // 🔴 KANAN (1/3)
                 Group::make([
 
-                    // section 2 - image
+                    // Image Section
                     Section::make("Image Upload")
+                        ->icon('heroicon-o-photo')
                         ->schema([
                             FileUpload::make("image")
                                 ->disk("public")
                                 ->directory("posts"),
                         ]),
 
-                    // section 3 - meta
+                    // Meta Section
                     Section::make("Meta Information")
+                        ->icon('heroicon-o-cog-6-tooth')
                         ->schema([
                             TagsInput::make("tags"),
                             Checkbox::make("published"),
                             DateTimePicker::make("published_at"),
                         ]),
-                ])->columnSpan(1)
 
-            ])->columns(3);
+                ])->columnSpan(1),
+
+            ])
+            ->columns(3); // grid utama
     }
 }
