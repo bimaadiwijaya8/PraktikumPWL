@@ -30,14 +30,19 @@ class PostForm
                         // 2 kolom field utama
                         Group::make([
                             TextInput::make("title")
-                                ->required()
-                                ->minLength(5),
+                                ->rules(['required', 'min:3', 'max:10']),
+                            // ->minLength(5),
 
                             TextInput::make("slug")
-                                ->unique(ignoreRecord: true),
+                                ->rules('required')
+                                ->unique(ignoreRecord: true)
+                                ->validationMessages([
+                                    'unique' => 'Slug sudah digunakan, silakan pilih slug lain.',
+                                ]),
 
                             Select::make("category_id")
                                 ->relationship("category", "name")
+                                ->required()
                                 ->preload()
                                 ->searchable(),
 
