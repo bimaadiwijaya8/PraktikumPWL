@@ -30,11 +30,15 @@ class PostForm
                         // 2 kolom field utama
                         Group::make([
                             TextInput::make("title")
-                                ->rules(['required', 'min:3', 'max:10']),
+                                ->rules(['required', 'min:5'])
+                                ->validationMessages([
+                                    'required' => 'Judul wajib diisi.',
+                                    'min' => 'Judul minimal 5 karakter.',
+                                ]),
                             // ->minLength(5),
 
                             TextInput::make("slug")
-                                ->rules('required')
+                                ->rules(['required', 'min:3'])
                                 ->unique(ignoreRecord: true)
                                 ->validationMessages([
                                     'unique' => 'Slug sudah digunakan, silakan pilih slug lain.',
@@ -65,7 +69,11 @@ class PostForm
                         ->schema([
                             FileUpload::make("image")
                                 ->disk("public")
-                                ->directory("posts"),
+                                ->directory("posts")
+                                ->required()
+                                ->validationMessages([
+                                    'required' => 'Gambar wajib diupload.',
+                                ]),
                         ]),
 
                     // Meta Section
