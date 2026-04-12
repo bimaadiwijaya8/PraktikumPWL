@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Products\Schemas;
 
 use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\IconEntry;
@@ -18,7 +17,10 @@ class ProductInfolist
             ->components([
                 Tabs::make('Product Tabs')
                     ->tabs([
+
+                        // ✅ TAB 1
                         Tab::make('Product Details')
+                            ->icon('heroicon-o-information-circle') // icon
                             ->schema([
                                 TextEntry::make('name')
                                     ->label('Product Name')
@@ -31,7 +33,11 @@ class ProductInfolist
                                 TextEntry::make('sku')
                                     ->label('Product SKU')
                                     ->badge()
-                                    ->color('success'),
+                                    ->color(fn ($state) => match (true) {
+                                        str_contains($state, 'A') => 'success',
+                                        str_contains($state, 'B') => 'warning',
+                                        default => 'gray',
+                                    }),
 
                                 TextEntry::make('description')
                                     ->label('Product Description'),
@@ -41,104 +47,53 @@ class ProductInfolist
                                     ->date('d M Y')
                                     ->color('info'),
                             ]),
-                        Tab::make('Product Price and Stock')
+
+                        // ✅ TAB 2
+                        Tab::make('Price & Stock')
+                            ->icon('heroicon-o-banknotes') // icon
+                            ->badge(fn ($record) => $record->stock) // badge jumlah stock
+                            ->badgeColor(fn ($record) => match (true) {
+                                $record->stock == 0 => 'danger',
+                                $record->stock < 5 => 'warning',
+                                default => 'success',
+                            })
                             ->schema([
                                 TextEntry::make('price')
                                     ->label('Product Price')
                                     ->weight('bold')
                                     ->color('primary')
-                                    ->icon('heroicon-s-currency-dollar'),
+                                    ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')),
+
                                 TextEntry::make('stock')
-                                    ->label('Product Stock'),
+                                    ->label('Product Stock')
+                                    ->badge() // ✅ badge dinamis
+                                    ->color(fn ($state) => match (true) {
+                                        $state == 0 => 'danger',
+                                        $state < 5 => 'warning',
+                                        default => 'success',
+                                    })
+                                    ->icon('heroicon-o-cube'),
                             ]),
-                        Tab::make('Image and Status')
+
+                        // ✅ TAB 3
+                        Tab::make('Media & Status')
+                            ->icon('heroicon-o-photo') // icon
                             ->schema([
                                 ImageEntry::make('image')
                                     ->label('Product Image')
                                     ->disk('public'),
-                                TextEntry::make('price')
-                                    ->label('Product Price')
-                                    ->weight('bold')
-                                    ->color('primary')
-                                    ->icon('heroicon-s-currency-dollar'),
-                                TextEntry::make('stock')
-                                    ->label('Product Stock')
-                                    ->weight('bold')
-                                    ->color('primary'),
+
                                 IconEntry::make('is_active')
                                     ->label('Is Active?')
                                     ->boolean(),
+
                                 IconEntry::make('is_featured')
                                     ->label('Is Featured?')
                                     ->boolean(),
-                            ])
+                            ]),
                     ])
                     ->columnSpanFull()
-                    ->vertical(),
-                Section::make('Product Info')
-                    ->schema([
-                        TextEntry::make('name')
-                            ->label('Product Name')
-                            ->weight('bold')
-                            ->color('primary'),
-
-                        TextEntry::make('id')
-                            ->label('Product ID'),
-
-                        TextEntry::make('sku')
-                            ->label('Product SKU')
-                            ->badge()
-                            ->color(fn($state) => match (true) {
-                                str_contains($state, 'A') => 'success',
-                                str_contains($state, 'B') => 'warning',
-                                default => 'gray',
-                            }),
-
-                        TextEntry::make('description')
-                            ->label('Product Description'),
-
-                        TextEntry::make('created_at')
-                            ->label('Product Created At')
-                            ->date('d M Y')
-                            ->color('info'),
-                    ])
-                    ->columns(2) // ✅ biar rapi
-                    ->columnSpanFull(),
-
-                Section::make('Product Price and Stock')
-                    ->schema([
-                        TextEntry::make('price')
-                            ->label('Product Price')
-                            ->weight('bold')
-                            ->color('primary')
-                            ->icon('heroicon-o-banknotes')
-                            ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.')),
-
-                        TextEntry::make('stock')
-                            ->label('Product Stock')
-                            ->icon('heroicon-o-cube')
-                            ->color(fn($state) => $state > 0 ? 'success' : 'danger'),
-                    ])
-                    ->columns(2) // ✅ biar sejajar
-                    ->columnSpanFull(),
-
-                Section::make('Image and Status')
-                    ->schema([
-                        ImageEntry::make('image')
-                            ->label('Product Image')
-                            ->disk('public'),
-
-                        IconEntry::make('is_active')
-                            ->label('Is Active?')
-                            ->boolean(),
-
-                        IconEntry::make('is_featured')
-                            ->label('Is Featured?')
-                            ->boolean(),
-                    ])
-                    ->columns(2)
-                    ->columnSpanFull(),
-
+                    ->vertical(), // ✅ vertical tabs
             ]);
     }
 }
