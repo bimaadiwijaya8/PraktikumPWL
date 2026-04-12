@@ -19,7 +19,9 @@ class ProductForm
         return $schema
             ->components([
                 Wizard::make([
+
                     Step::make('Product Info')
+                        ->icon('heroicon-o-information-circle') // ✅ icon
                         ->description('Isi Informasi Produk')
                         ->schema([
                             Group::make([
@@ -30,25 +32,31 @@ class ProductForm
                             ])->columns(2),
                             MarkdownEditor::make('description')
                         ]),
-                    // Step::make('Product prices')
+
                     Step::make('Product Price and Stock')
+                        ->icon('heroicon-o-currency-dollar') // ✅ icon
                         ->description('Isi Harga Produk')
                         ->schema([
                             Group::make([
                                 TextInput::make('price')
+                                    ->numeric() // penting
+                                    ->minValue(1) // ✅ harga > 0
                                     ->required(),
+
                                 TextInput::make('stock')
+                                    ->numeric()
                                     ->required(),
                             ])->columns(2),
-                            MarkdownEditor::make('description')
                         ]),
-                    // Step::make(media)
-                    Step::make('Media and status')
+
+                    Step::make('Media and Status')
+                        ->icon('heroicon-o-photo') // ✅ icon
                         ->description('Isi Gambar Produk')
                         ->schema([
                             FileUpload::make('image')
                                 ->disk('public')
                                 ->directory('products'),
+
                             Checkbox::make('is_active'),
                             Checkbox::make('is_featured'),
                         ]),

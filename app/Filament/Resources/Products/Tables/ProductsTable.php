@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 
+
 class ProductsTable
 {
     public static function configure(Table $table): Table
@@ -22,7 +23,12 @@ class ProductsTable
                 TextColumn::make('price'),
                 TextColumn::make('stock'),
                 ImageColumn::make('image')
-                    ->disk('public')
+                    ->disk('public'),
+                TextColumn::make('is_active')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn($state) => $state ? 'success' : 'danger')
+                    ->formatStateUsing(fn($state) => $state ? 'Active' : 'Inactive'),
             ])
             ->filters([
                 //
