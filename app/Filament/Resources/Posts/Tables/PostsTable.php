@@ -32,7 +32,7 @@ class PostsTable
                     ->sortable(),
                 IconColumn::make('published')
                     ->boolean(),
-            ]) ->defaultSort('created_at', 'asc')
+            ]) ->defaultSort('created_at', 'desc')
             ->filters([
                 //
             ])
